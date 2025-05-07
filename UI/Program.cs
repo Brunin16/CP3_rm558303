@@ -15,13 +15,15 @@ while (true)
 
     if (ac.ValidarAluno(rm, senha))
     {
-        Console.WriteLine("Login bem-sucedido!");
+        Console.WriteLine("Digite a data de hoje em formato dd/MM/yyyy");
+        if (!ac.ValidarDataSessao(Console.ReadLine())) { break; }
         ac.ValidarSegurancaSenha(senha);
+        Console.WriteLine("Login bem-sucedido!");
 
         bool continuar = true;
         while (continuar) 
         {
-            Console.WriteLine("\nSeja bem-vindo, Fulano");
+            Console.WriteLine($"\nSeja bem-vindo, Aluno ,RM:{rm}");
             Console.WriteLine("1 - Listar funcionários");
             Console.WriteLine("2 - Listar produtos");
             Console.WriteLine("3 - Sair");

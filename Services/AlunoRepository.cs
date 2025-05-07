@@ -1,35 +1,37 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository
 {
     public class AlunoRepository
     {
         Config config = new Config();
+
         public bool ValidarAluno(int rm, string senha)
         {
-            using (OracleConnection conexao = new OracleConnection(config._connectionString))
+            try
             {
-                conexao.Open();
-                string sql = $"SELECT COUNT(*) FROM TBL_ALUNOS_LOGIN WHERE NR_RM = '{rm}' AND DS_SENHA = '{senha}'";
-                OracleCommand cmd = new OracleCommand(sql, conexao);
-
-                object o = cmd.ExecuteScalar();
-
-                if (int.Parse(o.ToString()) != 0)
+                using (OracleConnection conexao = new OracleConnection(config._connectionString))
                 {
-                    return true;
-                }
-                else
-                {
-                    return false;
+                    conexao.Open();
+                    string sql = $"SELECT COUNT(*) FROM TBL_ALUNOS_LOGIN WHERE NR_RM = '{rm}' AND DS_SENHA = '{senha}'";
+                    OracleCommand cmd = new OracleCommand(sql, conexao);
+
+                    object o = cmd.ExecuteScalar();
+
+                    return int.Parse(o.ToString()) != 0;
                 }
             }
-
+            catch (OracleException ex)
+            {
+                Console.WriteLine($"Erro ao acessar o banco de dados Oracle: {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro inesperado: {ex.Message}");
+                return false;
+            }
         }
     }
 }

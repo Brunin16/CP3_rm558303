@@ -2,9 +2,6 @@
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository
 {
@@ -15,28 +12,40 @@ namespace Repository
 
         public List<Funcionario> resgatarFuncionarios()
         {
+            var funcionarios = new List<Funcionario>();
 
-        var funcionarios = new List<Funcionario>();
-            using (OracleConnection conexao = new OracleConnection(_connectionString))
+            try
             {
-                conexao.Open();
-                string sql = "SELECT * FROM TBL_FUNCIONARIOS";
-                using (var cmd = new OracleCommand(sql, conexao))
-                using (var reader = cmd.ExecuteReader())
+                using (OracleConnection conexao = new OracleConnection(_connectionString))
                 {
-                    while (reader.Read())
-                    {
-                        var funcionario = new Funcionario
-                        {
-                            IdFuncionario = reader.GetInt32(0),
-                            NomeFuncionario = reader.GetString(1),
-                            Cargo = reader.GetString(2),
-                            Salario = reader.GetDecimal(3)
-                        };
+                    conexao.Open();
+                    string sql = "SELECT * FROM TBL_FUNCIONARIOS";
 
-                        funcionarios.Add(funcionario);
+                    using (var cmd = new OracleCommand(sql, conexao))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var funcionario = new Funcionario
+                            {
+                                IdFuncionario = reader.GetInt32(0),
+                                NomeFuncionario = reader.GetString(1),
+                                Cargo = reader.GetString(2),
+                                Salario = reader.GetDecimal(3)
+                            };
+
+                            funcionarios.Add(funcionario);
+                        }
                     }
                 }
+            }
+            catch (OracleException ex)
+            {
+                Console.WriteLine($"Erro Oracle ao buscar funcionários: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro inesperado ao buscar funcionários: {ex.Message}");
             }
 
             return funcionarios;
